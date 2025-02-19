@@ -1,5 +1,6 @@
 package com.example.officeapp.presentation.screens
 
+import android.app.Activity
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
@@ -21,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -31,7 +33,10 @@ import androidx.navigation.navArgument
 import com.example.officeapp.presentation.NavItem
 
 @Composable
-fun MainScreen(navController: NavHostController) {
+fun MainScreen(
+    viewModelFactory: ViewModelProvider.Factory,
+    navController: NavHostController
+) {
     val childNavController = rememberNavController()
 
     val navItemList = listOf(
@@ -49,10 +54,12 @@ fun MainScreen(navController: NavHostController) {
     BackHandler {
         if (doubleBackToExitPressedOnce.value) {
 
-            navController.popBackStack()
+            (context as? Activity)?.finish()
         } else {
+
             doubleBackToExitPressedOnce.value = true
             Toast.makeText(context, "Press back again to exit", Toast.LENGTH_SHORT).show()
+
             Handler(Looper.getMainLooper()).postDelayed({
                 doubleBackToExitPressedOnce.value = false
             }, 2000)
@@ -100,7 +107,14 @@ fun MainScreen(navController: NavHostController) {
             }
             composable("rooms") { RoomsScreen() }
             composable("trash") { TrashScreen() }
-            composable("profile") { ProfileScreen { navController.navigate("auth") } }
+            composable("profile") {
+                ProfileScreen(viewModelFactory) {
+                    navController.navigate("auth") {
+                        popUpTo("auth") { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            }
             composable(
                 route = "documentDetail/{docId}",
                 arguments = listOf(navArgument("docId") { type = NavType.StringType })

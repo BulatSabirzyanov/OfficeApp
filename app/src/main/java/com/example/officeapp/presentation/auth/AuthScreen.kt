@@ -1,6 +1,11 @@
 package com.example.officeapp.presentation.auth
 
+import android.app.Activity
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -27,6 +31,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -42,20 +47,31 @@ fun AuthScreen(
     navController: NavHostController
 ) {
     val viewModel: AuthViewModel = viewModel(factory = viewModelFactory)
-
-    // Используем rememberSaveable, чтобы сохранять введённые данные
     var portal by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
-
-    // Подписка на состояние авторизации
     val authState by viewModel.authState.collectAsState()
 
-    // Если авторизация успешна, переходим на экран документов
-    if (authState is AuthState.Success) {
-        LaunchedEffect(Unit) {
+    val doubleBackToExitPressedOnce = remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    BackHandler {
+        if (doubleBackToExitPressedOnce.value) {
+            (context as? Activity)?.finish()
+        } else {
+            doubleBackToExitPressedOnce.value = true
+            Toast.makeText(context, "Press back again to exit", Toast.LENGTH_SHORT).show()
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                doubleBackToExitPressedOnce.value = false
+            }, 2000)
+        }
+    }
+
+    LaunchedEffect(authState) {
+        if (authState is AuthState.Success) {
             navController.navigate("main") {
-                popUpTo("auth") { inclusive = true } // Удаляем `AuthScreen` из стека, чтобы нельзя было вернуться назад
+                popUpTo("auth") { inclusive = true }
             }
         }
     }
@@ -73,26 +89,27 @@ fun AuthScreen(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        EditTextCompose(
+        EditText(
             placeholder = R.string.placeholder_portal,
             text = portal,
             onValueChanged = { portal = it },
             isEnabled = authState !is AuthState.Loading
         )
 
-        EditTextCompose(
+        EditText(
             placeholder = R.string.placeholder_email,
             text = email,
             onValueChanged = { email = it },
             isEnabled = authState !is AuthState.Loading
         )
 
-        EditTextCompose(
+        EditText(
             placeholder = R.string.placeholder_password,
             text = password,
             onValueChanged = { password = it },
             isEnabled = authState !is AuthState.Loading
         )
+
 
         ButtonProgress(
             text = R.string.placeholder_login,
@@ -104,11 +121,10 @@ fun AuthScreen(
                 .padding(top = 16.dp),
             onClick = {
                 viewModel.updateUrl(portal)
-                viewModel.auth(email, password, navController)
+                viewModel.auth(email, password)
             }
         )
 
-        // Отображение ошибки
         if (authState is AuthState.Error) {
             Text(
                 text = (authState as AuthState.Error).message,
@@ -123,7 +139,7 @@ fun AuthScreen(
 
 
 @Composable
-fun EditTextCompose(
+fun EditText(
     @StringRes placeholder: Int,
     text: String,
     onValueChanged: (String) -> Unit,
@@ -140,10 +156,6 @@ fun EditTextCompose(
                 contentDescription = null
             )
         },
-        colors = TextFieldDefaults.colors(
-            unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer
-        ),
         placeholder = {
             Text(stringResource(placeholder), color = MaterialTheme.colorScheme.onPrimaryContainer)
         },
@@ -203,6 +215,4 @@ fun ButtonProgress(
             )
         }
     }
-
-
 }

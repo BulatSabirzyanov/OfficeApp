@@ -27,14 +27,14 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideBaseUrlInterceptor(): BaseUrlInterceptor {
-        return BaseUrlInterceptor() // Теперь без аргументов
+        return BaseUrlInterceptor()
     }
 
     @Provides
     @Singleton
     fun provideOkHttpClient(baseUrlInterceptor: BaseUrlInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(baseUrlInterceptor) // Подключаем interceptor
+            .addInterceptor(baseUrlInterceptor)
             .build()
     }
 
@@ -48,7 +48,7 @@ class NetworkModule {
         return Retrofit.Builder()
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .baseUrl("https://hhhb.com/") // Просто заглушка, real baseUrl будет в interceptor
+            .baseUrl("https://hhhb.com/")
             .build()
     }
 

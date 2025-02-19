@@ -11,8 +11,8 @@ import com.example.officeapp.presentation.screens.MainScreen
 
 @Composable
 fun AppNavHost(viewModelFactory: ViewModelProvider.Factory, navController: NavHostController) {
-    NavHost(navController, startDestination = "main") {
+    NavHost(navController, startDestination = "auth") {
         composable("auth") { AuthScreen(viewModelFactory, navController) }
-        composable("main") { MainScreen(navController) }
+        composable("main") { MainScreen(viewModelFactory,navController) }
     }
 }

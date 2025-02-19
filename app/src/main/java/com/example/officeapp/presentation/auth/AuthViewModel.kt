@@ -2,7 +2,6 @@ package com.example.officeapp.presentation.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import com.example.officeapp.data.network.BaseUrlInterceptor
 import com.example.officeapp.data.network.model.AuthBody
 import com.example.officeapp.domain.usecase.AuthUseCase
@@ -14,10 +13,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class AuthState {
-    object Idle : AuthState() // Начальное состояние
-    object Loading : AuthState() // Загрузка
-    data class Success(val token: String) : AuthState() // Успешная аутентификация
-    data class Error(val message: String) : AuthState() // Ошибка
+    object Idle : AuthState()
+    object Loading : AuthState()
+    data class Success(val token: String) : AuthState()
+    data class Error(val message: String) : AuthState()
 }
 
 class AuthViewModel @Inject constructor(
@@ -29,33 +28,27 @@ class AuthViewModel @Inject constructor(
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState
 
-    var token: String? = sessionManager.getToken()
-        private set
-
-    fun auth(email: String, password: String, navController: NavHostController) {
+    fun auth(email: String, password: String) {
         viewModelScope.launch {
-            _authState.update {AuthState.Loading}
-            try {
-                val newToken = useCase.auth(AuthBody(email, password))
-                sessionManager.saveToken(newToken.response.token)
-                token = newToken.response.token
-                _authState.update{AuthState.Success(newToken.response.token)}
-            } catch (e: Exception) {
-                _authState.update{AuthState.Error(e.message ?: "Ошибка авторизации")}
+            _authState.update { AuthState.Loading }
+
+            val result = runCatching {
+                useCase.auth(AuthBody(email, password))
+            }
+
+            result.onSuccess { response ->
+                sessionManager.saveToken(response.response.token)
+                sessionManager.saveEmail(email)
+                _authState.update { AuthState.Success(response.response.token) }
+            }.onFailure { exception ->
+                _authState.update {
+                    AuthState.Error(exception.message ?: "Ошибка авторизации")
+                }
             }
         }
     }
 
     fun updateUrl(url: String) {
         baseUrlInterceptor.updateBaseUrl(url)
-    }
-
-    fun logout(navController: NavHostController) {
-        sessionManager.clearSession()
-        token = null
-        _authState.update {AuthState.Idle}
-        navController.navigate("login") {
-            popUpTo("documents") { inclusive = true }
-        }
     }
 }
