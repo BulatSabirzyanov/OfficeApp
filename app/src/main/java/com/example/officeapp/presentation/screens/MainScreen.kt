@@ -1,5 +1,9 @@
 package com.example.officeapp.presentation.screens
 
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -13,7 +17,10 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -36,13 +43,27 @@ fun MainScreen(navController: NavHostController) {
 
     val currentRoute = childNavController.currentBackStackEntryAsState().value?.destination?.route
 
+    val doubleBackToExitPressedOnce = remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    BackHandler {
+        if (doubleBackToExitPressedOnce.value) {
+
+            navController.popBackStack()
+        } else {
+            doubleBackToExitPressedOnce.value = true
+            Toast.makeText(context, "Press back again to exit", Toast.LENGTH_SHORT).show()
+            Handler(Looper.getMainLooper()).postDelayed({
+                doubleBackToExitPressedOnce.value = false
+            }, 2000)
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             NavigationBar {
                 navItemList.forEach { navItem ->
-                    // Для пункта "documents" проверяем два условия:
-                    // Если текущий маршрут равен "documents" или начинается с "documentDetail"
                     val isSelected = if (navItem.label == "documents") {
                         currentRoute == "documents" || currentRoute?.startsWith("documentDetail") == true
                     } else {
@@ -64,6 +85,7 @@ fun MainScreen(navController: NavHostController) {
             }
         }
     ) { innerPadding ->
+
         NavHost(
             navController = childNavController,
             startDestination = "documents",
@@ -84,7 +106,10 @@ fun MainScreen(navController: NavHostController) {
                 arguments = listOf(navArgument("docId") { type = NavType.StringType })
             ) { backStackEntry ->
                 val docId = backStackEntry.arguments?.getString("docId")
-                DocumentDetailScreen(docId)
+                DocumentDetailScreen(
+                    navController = childNavController,
+                    docId = docId
+                )
             }
         }
     }
