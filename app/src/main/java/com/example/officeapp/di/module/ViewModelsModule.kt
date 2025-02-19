@@ -1,0 +1,17 @@
+package com.example.officeapp.di.module
+
+import androidx.lifecycle.ViewModel
+import com.example.officeapp.di.ViewModelKey
+import com.example.officeapp.presentation.auth.AuthViewModel
+import dagger.Binds
+import dagger.Module
+import dagger.multibindings.IntoMap
+
+@Module
+abstract class ViewModelsModule {
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AuthViewModel::class)
+    abstract fun bindAuthViewModel(viewModel: AuthViewModel): ViewModel
+}

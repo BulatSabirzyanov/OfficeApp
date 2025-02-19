@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">OfficeApp</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="placeholder_portal">Portal</string>
+    <string name="placeholder_email">E-mail</string>
+    <string name="placeholder_password">Password</string>
+    <string name="placeholder_error">ERROR</string>
+    <string name="placeholder_login">Login</string>
+</resources>
