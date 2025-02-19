@@ -1,7 +1,7 @@
 package com.example.officeapp.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.example.officeapp.presentation.SessionManager
+import com.example.officeapp.utils.SessionManager
 import javax.inject.Inject
 
 class ProfileViewModel @Inject constructor(

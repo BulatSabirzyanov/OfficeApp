@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.officeapp.presentation.auth.AuthScreen
+import com.example.officeapp.presentation.screens.AuthScreen
 import com.example.officeapp.presentation.screens.MainScreen
 
 @Composable

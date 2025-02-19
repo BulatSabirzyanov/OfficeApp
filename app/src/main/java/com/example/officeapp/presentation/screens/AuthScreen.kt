@@ -1,12 +1,8 @@
-package com.example.officeapp.presentation.auth
+package com.example.officeapp.presentation.screens
 
-import android.app.Activity
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,7 +27,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -40,6 +38,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.officeapp.R
+import com.example.officeapp.presentation.viewmodels.AuthState
+import com.example.officeapp.presentation.viewmodels.AuthViewModel
+import com.example.officeapp.utils.Backpressed
 
 @Composable
 fun AuthScreen(
@@ -52,21 +53,12 @@ fun AuthScreen(
     var password by rememberSaveable { mutableStateOf("") }
     val authState by viewModel.authState.collectAsState()
 
+    val focusManager = LocalFocusManager.current
+
     val doubleBackToExitPressedOnce = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    BackHandler {
-        if (doubleBackToExitPressedOnce.value) {
-            (context as? Activity)?.finish()
-        } else {
-            doubleBackToExitPressedOnce.value = true
-            Toast.makeText(context, "Press back again to exit", Toast.LENGTH_SHORT).show()
-
-            Handler(Looper.getMainLooper()).postDelayed({
-                doubleBackToExitPressedOnce.value = false
-            }, 2000)
-        }
-    }
+    Backpressed(context, doubleBackToExitPressedOnce)
 
     LaunchedEffect(authState) {
         if (authState is AuthState.Success) {
@@ -79,7 +71,12 @@ fun AuthScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    focusManager.clearFocus()
+                })
+            },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -120,6 +117,7 @@ fun AuthScreen(
                 .padding(horizontal = 80.dp)
                 .padding(top = 16.dp),
             onClick = {
+                focusManager.clearFocus()
                 viewModel.updateUrl(portal)
                 viewModel.auth(email, password)
             }

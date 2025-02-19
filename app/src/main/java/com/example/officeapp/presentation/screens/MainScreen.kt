@@ -1,10 +1,5 @@
 package com.example.officeapp.presentation.screens
 
-import android.app.Activity
-import android.os.Handler
-import android.os.Looper
-import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -31,6 +26,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.officeapp.presentation.NavItem
+import com.example.officeapp.utils.Backpressed
 
 @Composable
 fun MainScreen(
@@ -51,20 +47,7 @@ fun MainScreen(
     val doubleBackToExitPressedOnce = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    BackHandler {
-        if (doubleBackToExitPressedOnce.value) {
-
-            (context as? Activity)?.finish()
-        } else {
-
-            doubleBackToExitPressedOnce.value = true
-            Toast.makeText(context, "Press back again to exit", Toast.LENGTH_SHORT).show()
-
-            Handler(Looper.getMainLooper()).postDelayed({
-                doubleBackToExitPressedOnce.value = false
-            }, 2000)
-        }
-    }
+    Backpressed(context, doubleBackToExitPressedOnce)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

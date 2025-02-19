@@ -6,9 +6,7 @@ import com.example.officeapp.di.module.DomainModule
 import com.example.officeapp.di.module.NetworkModule
 import com.example.officeapp.di.module.ViewModelsModule
 import com.example.officeapp.presentation.MainActivity
-import com.example.officeapp.presentation.SessionManager
-import com.github.terrakok.cicerone.NavigatorHolder
-import com.github.terrakok.cicerone.Router
+import com.example.officeapp.utils.SessionManager
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Module

@@ -1,11 +1,11 @@
-package com.example.officeapp.presentation.auth
+package com.example.officeapp.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.officeapp.data.network.BaseUrlInterceptor
 import com.example.officeapp.data.network.model.AuthBody
 import com.example.officeapp.domain.usecase.AuthUseCase
-import com.example.officeapp.presentation.SessionManager
+import com.example.officeapp.utils.SessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update

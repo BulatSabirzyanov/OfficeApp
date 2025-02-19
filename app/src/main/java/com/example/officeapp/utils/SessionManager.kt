@@ -1,4 +1,4 @@
-package com.example.officeapp.presentation
+package com.example.officeapp.utils
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -13,10 +13,6 @@ class SessionManager(context: Context) {
 
     fun saveEmail(email: String){
         prefs.edit().putString("user_email",email).apply()
-    }
-
-    fun getToken(): String? {
-        return prefs.getString("user_token", null)
     }
 
     fun getEmail(): String? {

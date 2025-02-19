@@ -2,7 +2,7 @@ package com.example.officeapp.di.module
 
 import androidx.lifecycle.ViewModel
 import com.example.officeapp.di.ViewModelKey
-import com.example.officeapp.presentation.auth.AuthViewModel
+import com.example.officeapp.presentation.viewmodels.AuthViewModel
 import com.example.officeapp.presentation.viewmodels.ProfileViewModel
 import dagger.Binds
 import dagger.Module
