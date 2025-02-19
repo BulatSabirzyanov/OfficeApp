@@ -1,6 +1,5 @@
 package com.example.officeapp.presentation.screens
 
-
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -16,17 +15,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.officeapp.presentation.NavItem
 
 @Composable
 fun MainScreen(navController: NavHostController) {
-
-
-    val childNavController = rememberNavController() // Локальный контроллер
+    val childNavController = rememberNavController()
 
     val navItemList = listOf(
         NavItem("documents", Icons.Default.Home),
@@ -35,7 +34,6 @@ fun MainScreen(navController: NavHostController) {
         NavItem("profile", Icons.Default.Person)
     )
 
-    // Состояние для выбранного индекса
     val currentRoute = childNavController.currentBackStackEntryAsState().value?.destination?.route
 
     Scaffold(
@@ -43,15 +41,18 @@ fun MainScreen(navController: NavHostController) {
         bottomBar = {
             NavigationBar {
                 navItemList.forEach { navItem ->
+                    // Для пункта "documents" проверяем два условия:
+                    // Если текущий маршрут равен "documents" или начинается с "documentDetail"
+                    val isSelected = if (navItem.label == "documents") {
+                        currentRoute == "documents" || currentRoute?.startsWith("documentDetail") == true
+                    } else {
+                        currentRoute == navItem.label
+                    }
                     NavigationBarItem(
-                        selected = currentRoute == navItem.label,
+                        selected = isSelected,
                         onClick = {
                             childNavController.navigate(navItem.label) {
-                                // Вместо обращения к childNavController.graph.startDestinationId,
-                                // можно указать явно маршрут, например "documents":
-                                popUpTo("documents") {
-                                    saveState = true
-                                }
+                                popUpTo("documents") { saveState = true }
                                 launchSingleTop = true
                                 restoreState = true
                             }
@@ -65,16 +66,26 @@ fun MainScreen(navController: NavHostController) {
     ) { innerPadding ->
         NavHost(
             navController = childNavController,
-            startDestination = "documents", // Начальный экран
+            startDestination = "documents",
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable("documents") { DocumentsScreen() }
+            composable("documents") {
+                DocumentsScreen(
+                    onDocumentClick = { docId ->
+                        childNavController.navigate("documentDetail/$docId")
+                    }
+                )
+            }
             composable("rooms") { RoomsScreen() }
             composable("trash") { TrashScreen() }
             composable("profile") { ProfileScreen { navController.navigate("auth") } }
+            composable(
+                route = "documentDetail/{docId}",
+                arguments = listOf(navArgument("docId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val docId = backStackEntry.arguments?.getString("docId")
+                DocumentDetailScreen(docId)
+            }
         }
     }
 }
-
-
-
