@@ -13,7 +13,7 @@ fun RoomsScreen(
 ) {
 
     Text(
-        "RoomsScreen",
+        "Rooms",
         modifier = Modifier.padding(start = 16.dp, top = 100.dp, bottom = 16.dp),
         style = MaterialTheme.typography.labelLarge.copy(
             fontSize = 36.sp
