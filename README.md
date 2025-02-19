@@ -44,5 +44,5 @@ Trash
 
 Используемые библиотеки:
 
-Retrofit — Okhttp - Coroutines - Dagger2 - Compose
+Retrofit — Okhttp - Coroutines - Dagger2 - Compose - Kotlinx Serialisation
 
