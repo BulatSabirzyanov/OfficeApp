@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +51,7 @@ fun DocumentDetailScreen(navController: NavHostController, docId: String?) {
             contentDescription = null,
             modifier = Modifier
                 .padding(start = 16.dp, top = 16.dp)
+                .size(30.dp)
                 .clickable {
                     navController.navigate("documents")
                 }
@@ -57,7 +59,7 @@ fun DocumentDetailScreen(navController: NavHostController, docId: String?) {
 
         Text(
             text = "$docId",
-            modifier = Modifier.padding(start = 16.dp, top = 100.dp, bottom = 16.dp),
+            modifier = Modifier.padding(start = 16.dp, top = 56.dp, bottom = 16.dp),
             style = MaterialTheme.typography.labelLarge.copy(fontSize = 36.sp)
         )
 

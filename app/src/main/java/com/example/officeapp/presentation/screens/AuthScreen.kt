@@ -14,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -32,6 +33,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
@@ -103,6 +106,7 @@ fun AuthScreen(
         EditText(
             placeholder = R.string.placeholder_password,
             text = password,
+            isPassword = true,
             onValueChanged = { password = it },
             isEnabled = authState !is AuthState.Loading
         )
@@ -142,12 +146,16 @@ fun EditText(
     text: String,
     onValueChanged: (String) -> Unit,
     isEnabled: Boolean,
+    isPassword: Boolean = false,
     modifier: Modifier = Modifier
 ) {
+    var passwordVisible by remember { mutableStateOf(false) }
+
     TextField(
         value = text,
         onValueChange = { onValueChanged(it) },
         enabled = isEnabled,
+        visualTransformation = if (isPassword && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
         leadingIcon = {
             Icon(
                 painter = painterResource(R.drawable.baseline_person_outline_24),
@@ -157,12 +165,28 @@ fun EditText(
         placeholder = {
             Text(stringResource(placeholder), color = MaterialTheme.colorScheme.onPrimaryContainer)
         },
+        trailingIcon = {
+            if (isPassword) {
+                val icon = if (passwordVisible)
+                    painterResource(R.drawable.visibility_icon)
+                else
+                    painterResource(R.drawable.visibility_off_icon)
+
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        painter = icon,
+                        contentDescription = if (passwordVisible) "Скрыть пароль" else "Показать пароль"
+                    )
+                }
+            }
+        },
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 56.dp)
             .padding(16.dp)
     )
 }
+
 
 @Composable
 fun ButtonProgress(
