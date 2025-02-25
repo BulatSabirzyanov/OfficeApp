@@ -1,4 +1,4 @@
-package com.example.officeapp.presentation.screens
+package com.example.officeapp.presentation.doc
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -31,7 +31,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.officeapp.R
-import com.example.officeapp.presentation.viewmodels.DocumentsViewModel
 
 @Composable
 fun DocumentsScreen(

@@ -1,5 +1,6 @@
 package com.example.officeapp.data.network
 
+import com.example.officeapp.data.network.model.ProfileResponse
 import com.example.officeapp.data.network.model.auth.AuthBody
 import com.example.officeapp.data.network.model.auth.AuthResponse
 import com.example.officeapp.data.network.model.files.FilesResponse
@@ -23,4 +24,18 @@ interface OnlyOfficeApiService {
         @Path("id") id: Int,
     ): FilesResponse
 
+    @GET("/api/2.0/files/rooms")
+    suspend fun getRooms(
+        @Header("Cookie") authKey: String
+    ): FilesResponse
+
+    @GET("/api/2.0/files/@trash")
+    suspend fun getTrash(
+        @Header("Cookie") authKey: String
+    ): FilesResponse
+
+    @GET("/api/2.0/people/@self")
+    suspend fun getMyProfile(
+        @Header("Cookie") authKey: String
+    ): ProfileResponse
 }

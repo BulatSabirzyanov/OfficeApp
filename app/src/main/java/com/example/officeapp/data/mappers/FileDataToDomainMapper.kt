@@ -1,4 +1,4 @@
-package com.example.officeapp.data.mapper
+package com.example.officeapp.data.mappers
 
 import com.example.officeapp.data.network.model.files.FilesResponse
 import com.example.officeapp.domain.models.FileModel

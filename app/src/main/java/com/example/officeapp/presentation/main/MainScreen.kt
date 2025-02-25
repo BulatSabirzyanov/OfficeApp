@@ -1,4 +1,4 @@
-package com.example.officeapp.presentation.screens
+package com.example.officeapp.presentation.main
 
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +27,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.officeapp.presentation.NavItem
+import com.example.officeapp.presentation.doc.DocumentDetailScreen
+import com.example.officeapp.presentation.doc.DocumentsScreen
+import com.example.officeapp.presentation.profile.ProfileScreen
+import com.example.officeapp.presentation.rooms.RoomsScreen
+import com.example.officeapp.presentation.trash.TrashDetailScreen
+import com.example.officeapp.presentation.trash.TrashScreen
 import com.example.officeapp.utils.Backpressed
 
 @Composable
@@ -87,8 +93,40 @@ fun MainScreen(
                     }
                 )
             }
-            composable("rooms") { RoomsScreen() }
-            composable("trash") { TrashScreen() }
+            composable("rooms") {
+                RoomsScreen(
+                    viewModelFactory = viewModelFactory,
+                    navController = childNavController
+                )
+            }
+            composable("trash") {
+                TrashScreen(
+                    viewModelFactory = viewModelFactory,
+                    navController = childNavController,
+                    onTrashClick = { trashId, folderTitle ->
+                        childNavController.navigate("trashDetail/$trashId?title=$folderTitle")
+                    }
+                )
+            }
+            composable(
+                route = "trashDetail/{docId}?title={title}",
+                arguments = listOf(
+                    navArgument("docId") { type = NavType.StringType },
+                    navArgument("title") {
+                        type = NavType.StringType
+                        defaultValue = "Unnamed Folder"
+                    }
+                )
+            ) { backStackEntry ->
+                val trashId = backStackEntry.arguments?.getString("trashId")
+                val title = backStackEntry.arguments?.getString("title")
+                TrashDetailScreen(
+                    navController = childNavController,
+                    trashId = trashId,
+                    folderTitle = title,
+                    viewModelFactory = viewModelFactory
+                )
+            }
             composable("profile") {
                 ProfileScreen(viewModelFactory) {
                     navController.navigate("auth") {

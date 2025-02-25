@@ -1,4 +1,4 @@
-package com.example.officeapp.presentation.viewmodels
+package com.example.officeapp.presentation.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -38,7 +38,6 @@ class AuthViewModel @Inject constructor(
 
             result.onSuccess { response ->
                 sessionManager.saveToken(response.response.token)
-                sessionManager.saveEmail(email)
                 _authState.update { AuthState.Success(response.response.token) }
             }.onFailure { exception ->
                 _authState.update {

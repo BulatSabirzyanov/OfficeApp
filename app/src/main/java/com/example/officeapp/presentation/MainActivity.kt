@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.officeapp.App
-import com.example.officeapp.presentation.viewmodels.ViewModelFactory
 import com.example.officeapp.ui.theme.OfficeAppTheme
+import com.example.officeapp.utils.ViewModelFactory
 import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {

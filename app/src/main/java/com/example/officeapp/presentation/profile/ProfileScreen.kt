@@ -1,4 +1,4 @@
-package com.example.officeapp.presentation.screens
+package com.example.officeapp.presentation.profile
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +12,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -21,7 +22,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.officeapp.R
-import com.example.officeapp.presentation.viewmodels.ProfileViewModel
 
 @Composable
 fun ProfileScreen(
@@ -29,7 +29,7 @@ fun ProfileScreen(
     onNavigate: () -> Unit
 ) {
     val viewModel: ProfileViewModel = viewModel(factory = viewModelFactory)
-    val email = rememberSaveable { viewModel.getEmail().toString() }
+    val profileState by viewModel.profileState.collectAsState()
     val scrollState = rememberScrollState()
 
     Column(
@@ -42,7 +42,7 @@ fun ProfileScreen(
             text = "Profile",
             style = MaterialTheme.typography.labelLarge.copy(fontSize = 36.sp),
             modifier = Modifier
-                .padding(bottom = 16.dp, top = 100.dp)
+                .padding(start = 16.dp, bottom = 16.dp, top = 100.dp)
                 .align(Alignment.Start)
         )
         Column(
@@ -59,7 +59,8 @@ fun ProfileScreen(
                     .padding(bottom = 24.dp)
             )
             Text(
-                text = "User Name",
+                text = profileState?.let { "${it.firstName ?: "Unknown"} ${it.lastName ?: "User"}" }
+                    ?: "User Name",
                 style = MaterialTheme.typography.labelLarge.copy(fontSize = 28.sp),
                 modifier = Modifier.padding(bottom = 16.dp)
             )
@@ -68,7 +69,7 @@ fun ProfileScreen(
                 style = MaterialTheme.typography.labelLarge.copy(fontSize = 20.sp)
             )
             Text(
-                text = email ?: "Email украли",
+                text = profileState?.email ?: "Email украли",
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             Button(

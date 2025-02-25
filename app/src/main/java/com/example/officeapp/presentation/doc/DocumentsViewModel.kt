@@ -1,4 +1,4 @@
-package com.example.officeapp.presentation.viewmodels
+package com.example.officeapp.presentation.doc
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -41,7 +41,7 @@ class DocumentsViewModel @Inject constructor(
             try {
 
                 val contents = getFolderFilesByIdUseCase.getFolderFilesById(authKey, folderId)
-                _folderContentsState.value = contents as FilesModel?
+                _folderContentsState.value = contents
             } catch (e: Exception) {
                 Log.e("DocumentsViewModel", "Error fetching folder contents: ${e.message}")
             }

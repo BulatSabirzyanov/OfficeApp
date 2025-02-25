@@ -1,4 +1,4 @@
-package com.example.officeapp.presentation.viewmodels
+package com.example.officeapp.utils
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

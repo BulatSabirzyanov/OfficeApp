@@ -1,4 +1,4 @@
-package com.example.officeapp.presentation.screens
+package com.example.officeapp.presentation.auth
 
 import android.util.Log
 import androidx.annotation.StringRes
@@ -41,8 +41,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.officeapp.R
-import com.example.officeapp.presentation.viewmodels.AuthState
-import com.example.officeapp.presentation.viewmodels.AuthViewModel
 import com.example.officeapp.utils.Backpressed
 
 @Composable
