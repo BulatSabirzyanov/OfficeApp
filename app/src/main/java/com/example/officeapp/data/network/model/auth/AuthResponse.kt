@@ -1,4 +1,4 @@
-package com.example.officeapp.data.network.model
+package com.example.officeapp.data.network.model.auth
 
 import kotlinx.serialization.Serializable
 

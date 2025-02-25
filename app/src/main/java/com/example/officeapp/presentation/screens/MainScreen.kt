@@ -1,5 +1,6 @@
 package com.example.officeapp.presentation.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -34,16 +35,13 @@ fun MainScreen(
     navController: NavHostController
 ) {
     val childNavController = rememberNavController()
-
     val navItemList = listOf(
         NavItem("documents", Icons.Default.Home),
         NavItem("rooms", Icons.AutoMirrored.Filled.List),
         NavItem("trash", Icons.Default.Delete),
         NavItem("profile", Icons.Default.Person)
     )
-
     val currentRoute = childNavController.currentBackStackEntryAsState().value?.destination?.route
-
     val doubleBackToExitPressedOnce = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -75,7 +73,6 @@ fun MainScreen(
             }
         }
     ) { innerPadding ->
-
         NavHost(
             navController = childNavController,
             startDestination = "documents",
@@ -83,8 +80,10 @@ fun MainScreen(
         ) {
             composable("documents") {
                 DocumentsScreen(
-                    onDocumentClick = { docId ->
-                        childNavController.navigate("documentDetail/$docId")
+                    viewModelFactory,
+                    navController,
+                    onDocumentClick = { docId, folderTitle ->
+                        childNavController.navigate("documentDetail/$docId?title=$folderTitle")
                     }
                 )
             }
@@ -93,19 +92,29 @@ fun MainScreen(
             composable("profile") {
                 ProfileScreen(viewModelFactory) {
                     navController.navigate("auth") {
-                        popUpTo("auth") { inclusive = true }
+                        popUpTo("main") { inclusive = true }
                         launchSingleTop = true
                     }
                 }
             }
             composable(
-                route = "documentDetail/{docId}",
-                arguments = listOf(navArgument("docId") { type = NavType.StringType })
+                route = "documentDetail/{docId}?title={title}",
+                arguments = listOf(
+                    navArgument("docId") { type = NavType.StringType },
+                    navArgument("title") {
+                        type = NavType.StringType
+                        defaultValue = "Unnamed Folder"
+                    }
+                )
             ) { backStackEntry ->
                 val docId = backStackEntry.arguments?.getString("docId")
+                val title = backStackEntry.arguments?.getString("title")
+                Log.d("MainScreen", "Navigated to documentDetail - docId: $docId, title: $title")
                 DocumentDetailScreen(
                     navController = childNavController,
-                    docId = docId
+                    docId = docId,
+                    folderTitle = title,
+                    viewModelFactory = viewModelFactory
                 )
             }
         }

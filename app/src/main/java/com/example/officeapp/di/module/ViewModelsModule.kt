@@ -3,6 +3,7 @@ package com.example.officeapp.di.module
 import androidx.lifecycle.ViewModel
 import com.example.officeapp.di.ViewModelKey
 import com.example.officeapp.presentation.viewmodels.AuthViewModel
+import com.example.officeapp.presentation.viewmodels.DocumentsViewModel
 import com.example.officeapp.presentation.viewmodels.ProfileViewModel
 import dagger.Binds
 import dagger.Module
@@ -20,4 +21,10 @@ abstract class ViewModelsModule {
     @IntoMap
     @ViewModelKey(ProfileViewModel::class)
     abstract fun bindProfileViewModel(viewModel: ProfileViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(DocumentsViewModel::class)
+    abstract fun bindDocumentsViewModel(viewModel: DocumentsViewModel): ViewModel
+
 }

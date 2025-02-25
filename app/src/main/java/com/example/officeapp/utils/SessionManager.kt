@@ -15,6 +15,10 @@ class SessionManager(context: Context) {
         prefs.edit().putString("user_email",email).apply()
     }
 
+    fun getToken(): String? {
+        return prefs.getString("user_token", null)
+    }
+
     fun getEmail(): String? {
         return prefs.getString("user_email",null)
     }
